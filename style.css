@@ -116,6 +116,18 @@ li:hover {
 
 }
 
+@media (max-width:800px) {
+    .nav-bar {
+        font-size: 12px;
+    }
+    .name {
+        font-size: 25px;
+    }
+    .work img {
+        width: 300px;
+    }
+}
+
 /* .row-home {
     display: grid;
     grid-template-columns: 1fr 1fr;
