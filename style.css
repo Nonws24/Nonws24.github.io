@@ -269,7 +269,7 @@ h1 {
 }
 
 .skill-img img {
-    width: 200px;
+    max-width: 150px;
     margin-top: 2rem;
     background:#fff;
     padding: 20px;
@@ -280,7 +280,7 @@ h1 {
 
 
 .skill-img img:hover {
-    width: 190px;
+    max-width: 160px;
     
 }
 
