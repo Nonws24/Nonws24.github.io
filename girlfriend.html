@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เป็นแฟนกันนะ?</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        :root {
+            --pink-bg: #fff0f3;
+            --pink-dark: #800f2f;
+            --pink-primary: #ff4d6d;
+            --pink-soft: #ffb3c1;
+            --gradient-bg: linear-gradient(135deg, #fff0f3 0%, #ffe5ec 100%);
+        }
+
+        body {
+            font-family: 'Mali', cursive;
+            background: var(--gradient-bg);
+            color: var(--pink-dark);
+            overflow: hidden;
+            touch-action: manipulation;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Floating Hearts Background */
+        .heart-bg {
+            position: absolute;
+            color: rgba(255, 77, 109, 0.3);
+            animation: float-up 8s infinite linear;
+            z-index: 0;
+            pointer-events: none;
+            user-select: none;
+            font-family: serif; /* For heart shape */
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(110vh) rotate(0deg) scale(0.8); opacity: 0; }
+            20% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        /* Card Styling - Glassmorphism Ultra Cute */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 3px solid #fff;
+            box-shadow: 
+                0 20px 50px rgba(255, 179, 193, 0.4),
+                inset 0 0 20px rgba(255, 255, 255, 0.5);
+            border-radius: 2.5rem;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Buttons */
+        .btn-custom {
+            font-size: 1.2rem;
+            border-radius: 50px;
+            padding: 15px 40px; /* Increased padding since no images */
+            border: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-yes {
+            background: linear-gradient(45deg, #10b981, #34d399);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        .btn-yes:hover { transform: scale(1.05) rotate(-2deg); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
+        .btn-yes:active { transform: scale(0.95); }
+
+        .btn-no {
+            background: linear-gradient(45deg, #ff4d6d, #ff758f);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+        }
+        .btn-no:hover { transform: scale(1.05) rotate(2deg); box-shadow: 0 6px 20px rgba(255, 77, 109, 0.4); }
+        .btn-no:active { transform: scale(0.95); }
+
+        .btn-start {
+            background: linear-gradient(45deg, #ff4d6d, #ff8fa3);
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(255, 77, 109, 0.4);
+        }
+        .btn-start:hover { transform: scale(1.05) translateY(-3px); }
+
+        /* Animations */
+        .pop-in { animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .shake { animation: shake 0.5s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px) rotate(-5deg); }
+            75% { transform: translateX(8px) rotate(5deg); }
+        }
+
+        /* Music Button */
+        .music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 2px solid var(--pink-soft);
+            color: var(--pink-primary);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        .music-btn:hover { transform: scale(1.1) rotate(15deg); }
+
+        /* Large Emoji Text */
+        .emoji-header {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+            display: inline-block;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Audio Player -->
+    <audio id="bg-music" loop>
+        <source src="img/From now on - Billkin cover _ SERIOUS BACON.mp3" type="audio/mpeg">
+    </audio>
+    <button id="music-toggle" class="music-btn" onclick="toggleMusic()">🔇</button>
+
+    <!-- Background Hearts -->
+    <div id="bg-hearts" class="position-absolute top-0 start-0 w-100 h-100 overflow-hidden"></div>
+
+    <!-- Main Container -->
+    <div class="container text-center" style="max-width: 480px; padding: 20px;">
+        
+        <!-- Scene 1: Introduction -->
+        <div id="scene-1" class="glass-panel p-5 pop-in">
+            <div class="emoji-header">🫣</div>
+            <h1 class="mb-4 display-6 fw-bold" style="color: #ff4d6d;">มีเรื่องจะถาม...</h1>
+            
+            <div class="mt-5">
+                <button class="btn btn-custom btn-start w-100" onclick="nextScene()">
+                    ว่ามาสิ... 💕
+                </button>
+            </div>
+        </div>
+
+        <!-- Scene 2: The Question -->
+        <div id="scene-2" class="glass-panel p-5 d-none">
+            <div class="emoji-header">🥺</div>
+            
+            <h2 class="fw-bold mb-5 display-5" style="color: #ff4d6d;">เป็นแฟนกันนะ?</h2>
+            
+            <div class="d-flex flex-column gap-3 align-items-center justify-content-center w-100">
+                <button id="btn-yes" class="btn btn-custom btn-yes w-100 fw-bold" onclick="acceptLove()">
+                    ตกลง 🥰
+                </button>
+                <button id="btn-no" class="btn btn-custom btn-no w-100 fw-bold" onclick="rejectLove()">
+                    ไม่เอา 😝
+                </button>
+            </div>
+        </div>
+
+        <!-- Scene 3: Success -->
+        <div id="scene-3" class="glass-panel p-5 d-none">
+            <div class="emoji-header">❤️</div>
+            <h1 class="display-6 fw-bold mb-3" style="color: #ff4d6d;">เย้! เป็นแฟนกันแล้ว</h1>
+            
+            <p class="mt-4 fs-4 fw-bold" style="color: #ff758f;">รักหนูที่สุดเลยยยย!</p>
+            <div class="mt-5 p-3 bg-white bg-opacity-50 rounded-4">
+                <p class="small text-muted mb-0">Screenshot หน้านี้ส่งมาให้เค้าดูด้วยนะ 💕</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // --- Variables ---
+        let noClickCount = 0;
+        const noTexts = [
+            "ไม่เอา 😝", 
+            "แน่ใจเหรอ?", 
+            "คิดดีๆ นะ!", 
+            "ให้โอกาสอีกที", 
+            "งั้นเค้าร้องไห้นะ 😭", 
+            "กดตกลงเถอะ 🥺",
+            "ใจร้ายยย",
+            "งือออออ"
+        ];
+
+        // --- Heart Background Generator ---
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-bg');
+            heart.innerHTML = ['❤️', '💖', '🌸', '✨', '🧸'][Math.floor(Math.random() * 5)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 20 + 15) + 'px'; // Bigger hearts
+            heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            document.getElementById('bg-hearts').appendChild(heart);
+            setTimeout(() => heart.remove(), 10000);
+        }
+        // Create initial hearts
+        for(let i=0; i<15; i++) setTimeout(createHeart, i * 200);
+        // Continue creating
+        setInterval(createHeart, 800);
+
+        // --- Logic ---
+        function nextScene() {
+            const s1 = document.getElementById('scene-1');
+            s1.style.opacity = '0';
+            s1.style.transform = 'scale(0.8)';
+            
+            setTimeout(() => {
+                s1.classList.add('d-none');
+                const s2 = document.getElementById('scene-2');
+                s2.classList.remove('d-none');
+                s2.classList.add('pop-in');
+            }, 300);
+            
+            playMusic();
+        }
+
+        function rejectLove() {
+            noClickCount++;
+            const btnNo = document.getElementById('btn-no');
+            const btnYes = document.getElementById('btn-yes');
+            // Removed Image logic since images are gone
+
+            // 1. Text Change
+            if (noClickCount < noTexts.length) {
+                btnNo.innerText = noTexts[noClickCount];
+            } else {
+                btnNo.innerText = noTexts[noTexts.length - 1];
+            }
+
+            // 2. Button Growth Logic (Cleaner)
+            let currentScale = 1 + (noClickCount * 0.4); 
+            btnYes.style.transform = `scale(${currentScale})`;
+            // Ensure Yes button stays above No button visually
+            btnYes.style.zIndex = 100;
+            
+            // 3. Shake Container
+            const scene = document.getElementById('scene-2');
+            scene.classList.remove('pop-in');
+            scene.classList.remove('shake');
+            void scene.offsetWidth; // Force Reflow
+            scene.classList.add('shake');
+        }
+
+        function acceptLove() {
+            // Confetti Explosion
+            if (typeof confetti === 'function') {
+                const duration = 3000;
+                const end = Date.now() + duration;
+                (function frame() {
+                    confetti({
+                        particleCount: 7,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: ['#ff4d6d', '#ff8fa3', '#fff0f3']
+                    });
+                    confetti({
+                        particleCount: 7,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: ['#ff4d6d', '#ff8fa3', '#fff0f3']
+                    });
+                    if (Date.now() < end) requestAnimationFrame(frame);
+                }());
+            }
+
+            // Scene Transition
+            const s2 = document.getElementById('scene-2');
+            s2.classList.add('d-none');
+            
+            const s3 = document.getElementById('scene-3');
+            s3.classList.remove('d-none');
+            s3.classList.add('pop-in');
+        }
+
+        // --- Audio ---
+        let isMusicPlaying = false;
+        async function playMusic() {
+            const audio = document.getElementById('bg-music');
+            try {
+                audio.volume = 0.5;
+                await audio.play();
+                isMusicPlaying = true;
+                document.getElementById('music-toggle').innerText = "🔊";
+            } catch (err) {
+                console.log("Autoplay blocked");
+            }
+        }
+
+        function toggleMusic() {
+            const audio = document.getElementById('bg-music');
+            if (isMusicPlaying) {
+                audio.pause();
+                isMusicPlaying = false;
+                document.getElementById('music-toggle').innerText = "🔇";
+            } else {
+                audio.play();
+                isMusicPlaying = true;
+                document.getElementById('music-toggle').innerText = "🔊";
+            }
+        }
+    </script>
+</body>
+</html>

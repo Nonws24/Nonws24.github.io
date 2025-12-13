@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday My Love</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        :root {
+            --pink-bg: #ffe4e6;
+            --pink-primary: #db2777;
+            --pink-text: #831843;
+            --pink-light: #fce7f3;
+        }
+
+        body {
+            font-family: 'Mali', cursive;
+            background-color: var(--pink-bg);
+            color: var(--pink-text);
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        ::selection {
+            background: #fbcfe8;
+            color: #831843;
+        }
+
+        .heart-bg {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.5);
+            animation: float 6s infinite ease-in-out;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) rotate(20deg); opacity: 0; }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px -10px rgba(255, 182, 193, 0.6);
+        }
+
+        .btn-pink-gradient {
+            background: linear-gradient(to right, #f472b6, #fb7185);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-pink-gradient:hover {
+            background: linear-gradient(to right, #ec4899, #f43f5e);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+        }
+        
+        .btn-pink-gradient:active {
+            transform: translateY(0);
+        }
+
+        .pop-in { animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .slide-up { animation: slideUp 0.8s ease-out forwards; }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .bounce-slow { animation: bounce 2s infinite; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-5%); }
+            50% { transform: translateY(5%); }
+        }
+
+        .fade-out { animation: fadeOut 0.5s forwards; }
+        
+        @keyframes fadeOut {
+            to { opacity: 0; transform: scale(1.1); }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background-color: var(--pink-primary);
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .img-frame {
+            width: 160px;
+            height: 160px;
+            position: relative;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+
+        .text-pink-primary { color: var(--pink-primary); }
+        .text-pink-muted { color: #f472b6; }
+    </style>
+</head>
+<body class="vh-100 vw-100 d-flex align-items-center justify-content-center position-relative">
+
+    <div id="bg-hearts" class="position-absolute top-0 start-0 w-100 h-100 overflow-hidden"></div>
+
+    <div id="intro-screen" class="position-relative z-1 text-center d-flex flex-column align-items-center justify-content-center p-4">
+        <h1 class="display-6 fw-bold mb-5 text-pink-primary animate-pulse" style="text-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+            ถึง... คนพิเศษของเค้า ❤️
+        </h1>
+        
+        <div class="cursor-pointer position-relative" onclick="openGift()" style="cursor: pointer;">
+            <div class="display-1 bounce-slow drop-shadow" style="font-size: 8rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));">
+                🎁
+            </div>
+            <div class="mt-4 px-4 py-2 bg-white bg-opacity-75 rounded-pill shadow-sm text-pink-primary fw-bold" style="backdrop-filter: blur(4px);">
+                แตะเพื่อเปิดของขวัญ
+            </div>
+        </div>
+    </div>
+
+    <div id="main-screen" class="d-none position-absolute z-1 w-100 px-3" style="max-width: 480px;">
+        <div class="glass-panel card border-0 rounded-5 p-4 text-center overflow-hidden">
+            
+            <div class="img-frame mx-auto mb-4">
+                <div class="position-absolute top-0 start-0 w-100 h-100 rounded-circle bg-danger bg-opacity-25 animate-pulse" style="filter: blur(8px);"></div>
+                <img src="https://api.dicebear.com/7.x/miniavs/svg?seed=Love&backgroundColor=ffdfbf" 
+                     alt="My Love" 
+                     class="position-relative w-100 h-100 rounded-circle border border-4 border-white shadow bg-white object-fit-cover">
+                <div class="position-absolute bottom-0 end-0 display-6" style="transform: rotate(-12deg) translate(10px, 10px);">🎂</div>
+            </div>
+
+            <h2 class="h2 fw-bold text-pink-primary mb-2 pop-in">
+                Happy Birthday! 🎉
+            </h2>
+            <p class="small text-pink-muted mb-4 fw-medium tracking-wide">
+                ( สุขสันต์วันเกิดนะคะ )
+            </p>
+
+            <div class="bg-white bg-opacity-50 rounded-4 p-3 mb-4 shadow-sm d-flex align-items-center justify-content-center" style="min-height: 120px;">
+                <p id="typing-text" class="mb-0 fs-5 lh-base" style="color: #881337;"></p>
+                <span class="cursor ms-1" id="cursor"></span>
+            </div>
+
+            <button onclick="celebrate()" class="btn btn-pink-gradient btn-lg w-100 rounded-4 py-3 fw-bold shadow d-flex align-items-center justify-content-center gap-2">
+                <span>เป่าเค้กเลย! 🕯️</span>
+            </button>
+            
+            <p class="mt-3 mb-0 small text-pink-muted opacity-75">
+                รักคุณเหนือที่สุดในโลกเลยนะ ❤️
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const messages = [
+            "สุขสันต์วันเกิดนะคนเก่ง 🎂",
+            "ขอให้คุณเหนือมีความสุขมากๆ ยิ้มเยอะๆ 😊",
+            "ผมจะอยู่ข้างๆ คอยซัพพอร์ตเสมอ",
+            "รักคุณเหนือเท่าจักรวาลเลย! 💖✨"
+        ];
+        
+        let messageIndex = 0;
+        let charIndex = 0;
+        const typingSpeed = 50;
+        const messageDelay = 1500;
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-bg');
+            heart.innerHTML = ['❤️', '💖', '🌸', '✨'][Math.floor(Math.random() * 4)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            
+            document.getElementById('bg-hearts').appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 7000);
+        }
+        setInterval(createHeart, 400);
+
+        function openGift() {
+            const intro = document.getElementById('intro-screen');
+            const main = document.getElementById('main-screen');
+
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#ff9a9e', '#fad0c4', '#ffd1ff']
+                });
+            } else {
+                console.log('Confetti not loaded');
+            }
+
+            intro.classList.add('fade-out');
+            
+            setTimeout(() => {
+                intro.classList.add('d-none');
+                intro.classList.remove('d-flex');
+
+                main.classList.remove('d-none');
+                main.classList.add('slide-up');
+                
+                setTimeout(typeWriter, 1000);
+            }, 500);
+        }
+
+        function typeWriter() {
+            if (messageIndex < messages.length) {
+                const currentMessage = messages[messageIndex];
+                const typeArea = document.getElementById('typing-text');
+                
+                if (charIndex < currentMessage.length) {
+                    typeArea.innerHTML = currentMessage.substring(0, charIndex + 1);
+                    charIndex++;
+                    setTimeout(typeWriter, typingSpeed);
+                } else {
+                    if (messageIndex < messages.length - 1) {
+                        setTimeout(() => {
+                            charIndex = 0;
+                            messageIndex++;
+                            typeWriter();
+                        }, messageDelay);
+                    } else {
+                        document.getElementById('cursor').style.display = 'none';
+                    }
+                }
+            }
+        }
+
+        function celebrate() {
+            if (typeof confetti === 'function') {
+                const duration = 3000;
+                const end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({
+                        particleCount: 5,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: ['#FF69B4', '#FFB6C1', '#FFC0CB']
+                    });
+                    confetti({
+                        particleCount: 5,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: ['#FF69B4', '#FFB6C1', '#FFC0CB']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            }
+
+            const btn = document.querySelector('button span');
+            const originalText = btn.innerText;
+            btn.innerText = "เย้! มีความสุขมากๆนะ 💕";
+            
+            for(let i=0; i<10; i++) createHeart();
+        }
+    </script>
+</body>
+</html>
